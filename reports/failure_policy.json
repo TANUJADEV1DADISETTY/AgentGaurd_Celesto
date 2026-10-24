@@ -1,0 +1,7 @@
+{
+  "failed_step": 7,
+  "total_steps": 10,
+  "policy": "rollback",
+  "rationale": "We chose ROLLBACK as the recovery policy for step-7 failures for three reasons. First, correctness: step 7 executes untrusted code that can corrupt sandbox state (fill the disk, leave zombie processes, overwrite the test harness). A Resume policy would inherit that corruption; step 8 (the test runner) would then fail for the wrong reason, giving us a misleading grade. Second, cost: a FreshStart would delete the sandbox and re-create it from scratch, discarding the dependency-installation work from steps 3-5 (30-60 seconds on a real microVM with cold image pull). Rollback restores the snapshot from step 6 in under 2 seconds, preserving the installed Python environment and the test harness. Third, traceability: every rollback writes a policy_applied event to failure_trace.jsonl, making the recovery auditable. The main tradeoff is snapshot disk cost (~200-500 MB per sandbox), which we mitigate by deleting the snapshot as soon as step 8 completes. For failures at steps 1-6 or 8-10 (where no pre-execution snapshot exists), we fall back to a FreshStart policy.",
+  "trace_path": "reports/failure_trace.jsonl"
+}

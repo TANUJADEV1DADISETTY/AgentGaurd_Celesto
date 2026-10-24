@@ -1,0 +1,25 @@
+{
+  "jobs": [
+    {
+      "sandbox_name": "sbx-eval3443b5ad",
+      "started_at": "2026-10-24T10:19:22.942881+00:00"
+    },
+    {
+      "sandbox_name": "sbx-eval7cfc2829",
+      "started_at": "2026-10-24T10:19:22.942881+00:00"
+    },
+    {
+      "sandbox_name": "sbx-evalb74d7298",
+      "started_at": "2026-10-24T10:19:22.941897+00:00"
+    },
+    {
+      "sandbox_name": "sbx-eval546a78de",
+      "started_at": "2026-10-24T10:19:22.941897+00:00"
+    },
+    {
+      "sandbox_name": "sbx-eval79c30264",
+      "started_at": "2026-10-24T10:19:22.940878+00:00"
+    }
+  ],
+  "breakage_notes": "All 5 concurrent jobs used unique uuid4-based sbx- names: no collisions detected. Simulated sandbox avoids Celesto Cloud rate limits (free tier: 1 retained sandbox). On real Cloud, concurrent runs would require a paid top-up or the local Firecracker runtime. ThreadPoolExecutor kept resource usage flat; no shared state between sandboxes. Watched for: name collisions (none), shared file state (none), DB contention (none, upsert schema)."
+}

@@ -1,0 +1,6 @@
+{
+  "who": "Educators and online learning platforms that automatically grade student code assignments at scale. A single malicious submission \u2014 a fork bomb, an rm -rf /, or a curl $API_KEY exfil \u2014 can crash the shared grading server, expose other students' work, or leak the platform's LLM credentials.",
+  "agent_work": "The grading agent receives a student code submission, spins up a fresh Celesto microVM sandbox with internet completely disabled and a pre-execution safety hook active, writes the submission and a test harness inside the VM, takes a filesystem snapshot, executes the student code (isolated from the host), runs the test suite, scores the result, logs every command to the audit trail, and deletes the sandbox. If step 7 (code execution) fails or is blocked, the agent restores the pre-execution snapshot (rollback policy) and records the recovery event in failure_trace.jsonl.",
+  "proof_output": "A JSON grade report with per-test results, a score, wall-clock time, boot-to-ready time, and sandbox name. Blocked malicious commands appear in logs/commands.jsonl with decision=block. The failure_trace.jsonl contains policy_applied=rollback events.",
+  "idea_source": "idea_bank"
+}

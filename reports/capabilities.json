@@ -1,0 +1,19 @@
+{
+  "capabilities": [
+    {
+      "id": "network_policy",
+      "why": "Student code is untrusted. A malicious submission can attempt to exfiltrate environment variables (LLM_API_KEY, CELESTO_API_KEY) via curl, wget, or a Python subprocess. By booting every grading sandbox with network_policy=off (internet completely disabled), we ensure that even if the safety hook missed a novel attack vector, no data can leave the microVM. This is the primary containment layer against prompt-injection exfiltration. Without it, a student who found our API key in the environment could drain our credits.",
+      "evidence_path": "reports/evidence/containment.log"
+    },
+    {
+      "id": "safety_hooks",
+      "why": "Safety hooks are Python callbacks that execute on the CONTROL PLANE before any command reaches the VM. Unlike a system-prompt instruction ('be careful'), a hook is compiled code that cannot be overridden by the model or a poisoned input. We block fork bombs, rm -rf /, dd disk writes, mkfs, and curl/wget commands carrying environment-variable references. Every command attempt \u2014 whether allowed or blocked \u2014 is written to logs/commands.jsonl with an ISO-8601 timestamp, sandbox name, decision, and execution_target=celesto_sandbox, giving a complete audit trail for post-incident forensics.",
+      "evidence_path": "logs/commands.jsonl"
+    },
+    {
+      "id": "snapshots",
+      "why": "The grading pipeline checkpoints the sandbox state in step 6, immediately before executing untrusted student code in step 7. If step 7 fails \u2014 because the code crashes, hangs, is blocked by the safety hook, or triggers a ResourceExhausted error \u2014 we restore the pre-execution snapshot (rollback policy) rather than discarding all work and re-creating the VM from scratch. Rollback is faster than FreshStart (sub-second vs 30-60 s for a full VM rebuild) and safer than Resume (which would inherit the corrupted state). The snapshot is also the foundation for fork-and-explore parallelism in future work: clone the snapshot into N VMs, run N different grading strategies, keep the best score.",
+      "evidence_path": "reports/failure_trace.jsonl"
+    }
+  ]
+}
